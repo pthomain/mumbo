@@ -19,18 +19,16 @@
  * under the License.
  */
 
-package uk.co.glass_software.android.mumbo.jumbo.key
+package uk.co.glass_software.android.mumbo.jumbo.key.provider.pre_m.rsa
 
 
-import uk.co.glass_software.android.boilerplate.utils.log.Logger
+import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.security.*
-import java.util.*
+import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.CipherInputStream
 import javax.crypto.CipherOutputStream
-import javax.crypto.NoSuchPaddingException
 
 internal class RsaEncrypter(
     private val keyStore: KeyStore?,
@@ -38,36 +36,39 @@ internal class RsaEncrypter(
     private val alias: String
 ) {
 
-    private val cipherInstance: Cipher
-        @Throws(NoSuchAlgorithmException::class, NoSuchProviderException::class, NoSuchPaddingException::class)
-        get() = Cipher.getInstance(RSA_MODE, CIPHER_PROVIDER)
+    private fun getCipherInstance() = Cipher.getInstance(
+        RSA_MODE,
+        CIPHER_PROVIDER
+    )
 
-    private val privateKeyEntry: KeyStore.PrivateKeyEntry?
-        @Throws(NoSuchAlgorithmException::class, UnrecoverableEntryException::class, KeyStoreException::class)
-        get() {
-            if (keyStore ==
-                null
-            ) {
-                logger.e(this, "KeyStore is null, no encryption on device")
-                return null
-            } else {
-                logger.d(this, "Found a key pair in the KeyStore")
-                return keyStore.getEntry(
-                    alias, null
+    private fun getPrivateKeyEntry() =
+        if (keyStore == null) {
+            logger.e(this, "KeyStore is null, no encryption on device")
+            null
+        } else {
+            try {
+                val entry = keyStore.getEntry(
+                    alias,
+                    null
                 ) as KeyStore.PrivateKeyEntry
+                logger.d(this, "Found a key pair in the KeyStore")
+                entry
+            } catch (e: Exception) {
+                logger.e(this, e, "Found a key pair in the KeyStore but could not load it")
+                null
             }
         }
 
     @Throws(Exception::class)
     fun encrypt(secret: ByteArray): ByteArray? {
-        val privateKeyEntry = privateKeyEntry
+        val privateKeyEntry = getPrivateKeyEntry()
 
         if (privateKeyEntry == null) {
             logger.e(this, "Private key entry was null")
             return null
         }
 
-        val inputCipher = cipherInstance
+        val inputCipher = getCipherInstance()
         inputCipher.init(Cipher.ENCRYPT_MODE, privateKeyEntry.certificate.publicKey)
 
         val outputStream = ByteArrayOutputStream()
@@ -80,25 +81,18 @@ internal class RsaEncrypter(
 
     @Throws(Exception::class)
     fun decrypt(encrypted: ByteArray): ByteArray? {
-        val privateKeyEntry = privateKeyEntry
+        val privateKeyEntry = getPrivateKeyEntry()
 
         if (privateKeyEntry == null) {
             logger.e(this, "Private key entry was null")
             return null
         }
 
-        val outputCipher = cipherInstance
+        val outputCipher = getCipherInstance()
         outputCipher.init(Cipher.DECRYPT_MODE, privateKeyEntry.privateKey)
 
         val inputStream = ByteArrayInputStream(encrypted)
-        val cipherInputStream = CipherInputStream(inputStream, outputCipher)
-        val values = cipherInputStream.readBytes()
-
-        val bytes = ByteArray(values.size)
-        for (i in bytes.indices) {
-            bytes[i] = values[i]
-        }
-        return bytes
+        return CipherInputStream(inputStream, outputCipher).readBytes()
     }
 
     companion object {

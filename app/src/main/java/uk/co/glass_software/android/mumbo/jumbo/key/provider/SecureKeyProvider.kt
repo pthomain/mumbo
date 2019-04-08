@@ -19,12 +19,11 @@
  * under the License.
  */
 
-package uk.co.glass_software.android.mumbo.jumbo
+package uk.co.glass_software.android.mumbo.jumbo.key.provider
 
 import java.security.Key
 
 interface SecureKeyProvider {
-
     val key: Key?
     val isEncryptionSupported: Boolean
     val isEncryptionKeySecure: Boolean

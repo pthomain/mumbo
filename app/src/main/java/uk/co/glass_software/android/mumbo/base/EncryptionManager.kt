@@ -23,18 +23,37 @@ package uk.co.glass_software.android.mumbo.base
 
 interface EncryptionManager {
 
-    val isEncryptionSupported: Boolean
+    val isEncryptionAvailable: Boolean
+    val keyPolicy: KeyPolicy
 
-    fun encrypt(toEncrypt: String?,
-                dataTag: String): String?
+    fun encrypt(
+        toEncrypt: String?,
+        dataTag: String,
+        password: String? = null
+    ): String?
 
-    fun encryptBytes(toEncrypt: ByteArray?,
-                     dataTag: String): ByteArray?
+    fun encryptBytes(
+        toEncrypt: ByteArray?,
+        dataTag: String,
+        password: String? = null
+    ): ByteArray?
 
-    fun decrypt(toDecrypt: String?,
-                dataTag: String): String?
+    fun decrypt(
+        toDecrypt: String?,
+        dataTag: String,
+        password: String? = null
+    ): String?
 
-    fun decryptBytes(toDecrypt: ByteArray?,
-                     dataTag: String): ByteArray?
+    fun decryptBytes(
+        toDecrypt: ByteArray?,
+        dataTag: String,
+        password: String? = null
+    ): ByteArray?
 
+    enum class KeyPolicy{
+        SHARED_PREFERENCES, //key stored in the Android SharedPreferences
+        KEY_STORE,          //key stored in the Android KeyStore (might get erased if the user changes their lock screen mechanism)
+        KEY_CHAIN,          //key stored in the Android KeyChain (won't get erased if the user changes their lock screen mechanism)
+        PROVIDED            //key provided at runtime by the caller
+    }
 }

@@ -27,7 +27,7 @@ import com.facebook.android.crypto.keychain.SharedPrefsBackedKeyChain
 import com.facebook.crypto.CryptoConfig
 import dagger.Module
 import dagger.Provides
-import uk.co.glass_software.android.boilerplate.utils.log.Logger
+import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
 import uk.co.glass_software.android.mumbo.MumboComponent.Companion.CONCEAL
 import uk.co.glass_software.android.mumbo.base.EncryptionManager
 import javax.inject.Named

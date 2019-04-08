@@ -27,10 +27,12 @@ import android.os.Build.VERSION_CODES.JELLY_BEAN_MR2
 import com.facebook.crypto.CryptoConfig
 import dagger.Module
 import dagger.Provides
-import uk.co.glass_software.android.boilerplate.Boilerplate
-import uk.co.glass_software.android.boilerplate.utils.log.Logger
-import uk.co.glass_software.android.boilerplate.utils.preferences.Prefs
-import uk.co.glass_software.android.boilerplate.utils.preferences.SharedPrefsDelegate
+import uk.co.glass_software.android.boilerplate.core.utils.delegates.Prefs
+import uk.co.glass_software.android.boilerplate.core.utils.delegates.Prefs.Companion.prefs
+import uk.co.glass_software.android.boilerplate.core.utils.delegates.SharedPrefsDelegate
+import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
+import uk.co.glass_software.android.mumbo.jumbo.key.provider.pre_m.rsa.RsaEncryptedKeyPairProvider
+import uk.co.glass_software.android.mumbo.jumbo.key.provider.pre_m.rsa.RsaEncrypter
 import java.security.KeyStore
 import javax.inject.Named
 import javax.inject.Singleton
@@ -98,7 +100,7 @@ internal class KeyModule(
     @Singleton
     @Named(JUMBO_PREFS)
     internal fun providePrefs() =
-        Boilerplate.init(context, isDebug).let { Prefs.with(JUMBO_PREFS) }
+        context.prefs(JUMBO_PREFS)
 
     @Provides
     @Singleton

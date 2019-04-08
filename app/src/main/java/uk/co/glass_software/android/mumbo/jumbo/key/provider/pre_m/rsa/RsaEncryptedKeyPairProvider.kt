@@ -19,16 +19,16 @@
  * under the License.
  */
 
-package uk.co.glass_software.android.mumbo.jumbo.key
+package uk.co.glass_software.android.mumbo.jumbo.key.provider.pre_m.rsa
 
 import android.util.Base64
 import com.facebook.android.crypto.keychain.SecureRandomFix
 import com.facebook.crypto.CryptoConfig
 import com.facebook.crypto.MacConfig
 import io.reactivex.annotations.NonNull
-import uk.co.glass_software.android.boilerplate.Boilerplate.logger
-import uk.co.glass_software.android.boilerplate.utils.log.Logger
-import uk.co.glass_software.android.boilerplate.utils.preferences.SharedPrefsDelegate
+import uk.co.glass_software.android.boilerplate.core.utils.delegates.SharedPrefsDelegate
+import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
+import uk.co.glass_software.android.mumbo.jumbo.key.KeyPair
 
 internal class RsaEncryptedKeyPairProvider internal constructor(
     private val rsaEncrypter: RsaEncrypter,
@@ -96,14 +96,6 @@ internal class RsaEncryptedKeyPairProvider internal constructor(
         } else pair!!
     }
 
-    fun isEncryptionKeySecure(): Boolean =
-        try {
-            getOrGenerate().isEncrypted
-        } catch (e: Exception) {
-            logger.e(this, e, "Could not check if the key pair was encrypted")
-            false
-        }
-
     fun initialise() {
         try {
             getOrGenerate()
@@ -111,6 +103,14 @@ internal class RsaEncryptedKeyPairProvider internal constructor(
             logger.e(this, e, "Could not initialise RsaEncryptedKeyPairProvider")
         }
     }
+
+    fun isEncryptionKeySecure(): Boolean =
+        try {
+            getOrGenerate().isEncrypted
+        } catch (e: Exception) {
+            logger.e(this, e, "Could not check if the key pair was encrypted")
+            false
+        }
 
     @Synchronized
     fun destroyKeys() {

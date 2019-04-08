@@ -28,63 +28,70 @@ import com.facebook.android.crypto.keychain.SharedPrefsBackedKeyChain
 import com.facebook.crypto.Crypto
 import com.facebook.crypto.Entity
 import com.facebook.soloader.SoLoader
-import uk.co.glass_software.android.boilerplate.utils.log.Logger
+import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
 import uk.co.glass_software.android.mumbo.base.BaseEncryptionManager
+import uk.co.glass_software.android.mumbo.base.EncryptionManager.KeyPolicy.SHARED_PREFERENCES
 
-internal class ConcealEncryptionManager(context: Context,
-                                        logger: Logger,
-                                        keyChain: SharedPrefsBackedKeyChain,
-                                        androidConceal: AndroidConceal)
-    : BaseEncryptionManager(logger) {
+internal class ConcealEncryptionManager(
+    context: Context,
+    logger: Logger,
+    keyChain: SharedPrefsBackedKeyChain,
+    androidConceal: AndroidConceal
+) : BaseEncryptionManager(logger, SHARED_PREFERENCES) {
 
-    override val isEncryptionSupported: Boolean by lazy { isAvailable }
+    override val isEncryptionAvailable: Boolean
 
-    private var isAvailable: Boolean = false
-    private var crypto: Crypto? = null
+    private lateinit var crypto: Crypto
 
     init {
+        var isEncryptionAvailable: Boolean
         try {
             SoLoader.init(context, false)
-
-            // Creates a new Crypto object with default implementations of a key chain
             crypto = androidConceal.createDefaultCrypto(keyChain)
 
             // Check for whether the crypto functionality is available
             // This might fail if Android does not load libraries correctly.
-            isAvailable = crypto?.isAvailable ?: false
+            isEncryptionAvailable = crypto.isAvailable
         } catch (e: Exception) {
-            isAvailable = false
+            isEncryptionAvailable = false
         }
 
-        logger.d(this, "Conceal is" + (if (isAvailable) "" else " NOT") + " available")
+        this.isEncryptionAvailable = isEncryptionAvailable
+        logger.d(this, "Conceal is" + (if (isEncryptionAvailable) "" else " NOT") + " available")
     }
 
-    override fun encryptBytes(toEncrypt: ByteArray?,
-                              dataTag: String): ByteArray? {
-        if (toEncrypt == null || !isAvailable) {
-            return null
-        }
+    override fun encryptBytes(
+        toEncrypt: ByteArray?,
+        dataTag: String,
+        password: String?
+    ) =
+        if (toEncrypt != null && isEncryptionAvailable) {
+            try {
+                crypto.encrypt(
+                    toEncrypt,
+                    Entity.create(dataTag)
+                )
+            } catch (e: Exception) {
+                logger.e(this, e, "Could not encrypt the given bytes")
+                null
+            }
+        } else null
 
-        return try {
-            crypto!!.encrypt(toEncrypt, Entity.create(dataTag))
-        } catch (e: Exception) {
-            logger.e(this, e, "Could not encrypt the given bytes")
-            null
-        }
-    }
-
-    override fun decryptBytes(toDecrypt: ByteArray?,
-                              dataTag: String): ByteArray? {
-        if (toDecrypt == null || !isAvailable) {
-            return null
-        }
-
-        return try {
-            crypto!!.decrypt(toDecrypt, Entity.create(dataTag))
-        } catch (e: Exception) {
-            logger.e(this, e, "Could not decrypt the given bytes")
-            null
-        }
-    }
+    override fun decryptBytes(
+        toDecrypt: ByteArray?,
+        dataTag: String,
+        password: String?
+    ) =
+        if (toDecrypt != null && isEncryptionAvailable) {
+            try {
+                crypto.decrypt(
+                    toDecrypt,
+                    Entity.create(dataTag)
+                )
+            } catch (e: Exception) {
+                logger.e(this, e, "Could not decrypt the given bytes")
+                null
+            }
+        } else null
 
 }

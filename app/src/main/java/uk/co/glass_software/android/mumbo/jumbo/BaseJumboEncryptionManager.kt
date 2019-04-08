@@ -21,39 +21,57 @@
 
 package uk.co.glass_software.android.mumbo.jumbo
 
-import uk.co.glass_software.android.boilerplate.Boilerplate.logger
-import uk.co.glass_software.android.boilerplate.utils.log.Logger
+import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
 import uk.co.glass_software.android.mumbo.base.BaseEncryptionManager
+import uk.co.glass_software.android.mumbo.base.EncryptionManager.KeyPolicy
 import javax.crypto.Cipher
-import kotlin.math.log
 
-internal abstract class BaseJumboEncryptionManager protected constructor(logger: Logger) :
-    BaseEncryptionManager(logger) {
+internal abstract class BaseJumboEncryptionManager protected constructor(
+    logger: Logger,
+    override val keyPolicy: KeyPolicy
+) : BaseEncryptionManager(logger, keyPolicy) {
 
     override fun encryptBytes(
         toEncrypt: ByteArray?,
-        dataTag: String
-    ) =
-        if (toEncrypt == null) null
-        else try {
-            getCipher(true).doFinal(toEncrypt)
-        } catch (e: Exception) {
-            logger.e(this, e, "Could not encrypt the given bytes")
-            null
-        }
+        dataTag: String,
+        password: String?
+    ) = encryptOrDecryptBytes(
+        toEncrypt,
+        dataTag,
+        password,
+        true
+    )
 
     override fun decryptBytes(
         toDecrypt: ByteArray?,
-        dataTag: String
+        dataTag: String,
+        password: String?
+    ) = encryptOrDecryptBytes(
+        toDecrypt,
+        dataTag,
+        password,
+        false
+    )
+
+    private fun encryptOrDecryptBytes(
+        data: ByteArray?,
+        dataTag: String,
+        password: String?,
+        isEncrypt: Boolean
     ) =
-        if (toDecrypt == null) null
-        else try {
-            getCipher(false).doFinal(toDecrypt)
-        } catch (e: Exception) {
-            logger.e(this, e, "Could not decrypt the given bytes")
-            null
-        }
+        if (data != null) {
+            try {
+                getCipher(isEncrypt, password).doFinal(data)
+            } catch (e: Exception) {
+                logger.e(this, e, "Could not ${if (isEncrypt) "encrypt" else "decrypt"} the given bytes")
+                null
+            }
+        } else null
 
     @Throws(Exception::class)
-    protected abstract fun getCipher(isEncrypt: Boolean): Cipher
+    protected abstract fun getCipher(
+        isEncrypt: Boolean,
+        password: String?
+    ): Cipher
+
 }

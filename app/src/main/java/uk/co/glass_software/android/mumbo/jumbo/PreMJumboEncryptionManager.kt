@@ -22,38 +22,34 @@
 package uk.co.glass_software.android.mumbo.jumbo
 
 import io.reactivex.annotations.NonNull
-import uk.co.glass_software.android.boilerplate.utils.log.Logger
+import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
+import uk.co.glass_software.android.mumbo.base.EncryptionManager
+import uk.co.glass_software.android.mumbo.base.EncryptionManager.KeyPolicy.KEY_CHAIN
+import uk.co.glass_software.android.mumbo.jumbo.key.provider.SecureKeyProvider
 import javax.crypto.Cipher
 
 //see https://medium.com/@ericfu/securely-storing-secrets-in-an-android-application-501f030ae5a3#.qcgaaeaso
-internal class PreMEncryptionManager internal constructor(
+internal class PreMJumboEncryptionManager internal constructor(
     logger: Logger,
     private val secureKeyProvider: SecureKeyProvider
-) : BaseJumboEncryptionManager(logger) {
-
-    override val isEncryptionSupported = secureKeyProvider.isEncryptionSupported
-
-    val isEncryptionKeySecure = secureKeyProvider.isEncryptionKeySecure
+) : BaseJumboEncryptionManager(logger, KEY_CHAIN) {
+    override val isEncryptionAvailable = secureKeyProvider.isEncryptionSupported
 
     @NonNull
     @Throws(Exception::class)
-    override fun getCipher(isEncrypt: Boolean): Cipher {
-        val secretKey = secureKeyProvider.key
-        if (secretKey == null) {
-            throw IllegalStateException("Could not retrieve the secret key")
-        } else {
-            val cipher = Cipher.getInstance(AES_MODE, ENCRYPTION_PROVIDER)
-            cipher.init(
-                if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE,
-                secretKey
-            )
-            return cipher
+    override fun getCipher(
+        isEncrypt: Boolean,
+        password: String?
+    ) =
+        secureKeyProvider.key.let {
+            if (it == null)
+                throw IllegalStateException("Could not retrieve the secret key")
+            else
+                Cipher.getInstance("AES/GCM/NoPadding").apply {
+                    init(
+                        if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE,
+                        it
+                    )
+                }
         }
-    }
-
-    companion object {
-
-        private val ENCRYPTION_PROVIDER = "BC"
-        private val AES_MODE = "AES/ECB/PKCS7Padding"
-    }
 }

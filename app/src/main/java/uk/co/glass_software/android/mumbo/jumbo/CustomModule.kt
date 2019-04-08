@@ -34,11 +34,13 @@ import dagger.Provides
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.JELLY_BEAN_MR2
 import android.os.Build.VERSION_CODES.M
-import uk.co.glass_software.android.boilerplate.utils.log.Logger
+import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
 import uk.co.glass_software.android.mumbo.jumbo.key.KeyModule
 import uk.co.glass_software.android.mumbo.jumbo.key.KeyModule.Companion.KEY_ALIAS_POST_M
 import uk.co.glass_software.android.mumbo.jumbo.key.KeyModule.Companion.KEY_ALIAS_PRE_M
-import uk.co.glass_software.android.mumbo.jumbo.key.RsaEncryptedKeyPairProvider
+import uk.co.glass_software.android.mumbo.jumbo.key.provider.post_m.PostMSecureKeyProvider
+import uk.co.glass_software.android.mumbo.jumbo.key.provider.pre_m.PreMSecureKeyProvider
+import uk.co.glass_software.android.mumbo.jumbo.key.provider.pre_m.rsa.RsaEncryptedKeyPairProvider
 
 @Module(includes = [KeyModule::class])
 internal class CustomModule {
@@ -77,7 +79,7 @@ internal class CustomModule {
         logger: Logger,
         secureKeyProvider: PreMSecureKeyProvider
     ) = if (SDK_INT >= JELLY_BEAN_MR2) {
-        PreMEncryptionManager(
+        PreMJumboEncryptionManager(
             logger,
             secureKeyProvider
         )

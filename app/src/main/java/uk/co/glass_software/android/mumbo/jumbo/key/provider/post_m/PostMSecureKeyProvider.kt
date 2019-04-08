@@ -19,15 +19,15 @@
  * under the License.
  */
 
-package uk.co.glass_software.android.mumbo.jumbo
+package uk.co.glass_software.android.mumbo.jumbo.key.provider.post_m
 
 import android.annotation.TargetApi
 import android.os.Build.VERSION_CODES.M
 import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
 import android.security.keystore.KeyProperties.*
-import uk.co.glass_software.android.boilerplate.utils.log.Logger
+import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
 import uk.co.glass_software.android.mumbo.jumbo.key.KeyModule.Companion.ANDROID_KEY_STORE
+import uk.co.glass_software.android.mumbo.jumbo.key.provider.SecureKeyProvider
 import java.security.Key
 import java.security.KeyStore
 import javax.crypto.KeyGenerator
@@ -39,10 +39,8 @@ class PostMSecureKeyProvider internal constructor(
 ) : SecureKeyProvider {
 
     override val key: Key? = keyStore?.getKey(keyAlias, null)
-
     override val isEncryptionSupported = keyStore != null
-
-    override val isEncryptionKeySecure = isEncryptionSupported
+    override val isEncryptionKeySecure = false //fixme
 
     init {
         createNewKeyPairIfNeeded()

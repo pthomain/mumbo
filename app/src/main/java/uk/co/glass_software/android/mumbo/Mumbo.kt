@@ -22,7 +22,7 @@
 package uk.co.glass_software.android.mumbo
 
 import android.content.Context
-import uk.co.glass_software.android.boilerplate.utils.log.Logger
+import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
 
 class Mumbo(
     context: Context,
@@ -30,6 +30,8 @@ class Mumbo(
 ) {
 
     fun conceal() = component.conceal()
+
+    fun jumbo() = component.conceal()
 
     private val component =
         DaggerMumboComponent.builder()

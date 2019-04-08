@@ -24,7 +24,7 @@ package uk.co.glass_software.android.mumbo
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import uk.co.glass_software.android.boilerplate.utils.log.Logger
+import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
 import uk.co.glass_software.android.mumbo.conceal.ConcealModule
 import javax.inject.Singleton
 
