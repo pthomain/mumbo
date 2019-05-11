@@ -54,6 +54,7 @@ interface EncryptionManager {
         SHARED_PREFERENCES, //key stored in the Android SharedPreferences
         KEY_STORE,          //key stored in the Android KeyStore (might get erased if the user changes their lock screen mechanism)
         KEY_CHAIN,          //key stored in the Android KeyChain (won't get erased if the user changes their lock screen mechanism)
-        PROVIDED            //key provided at runtime by the caller
+        PROVIDED,            //key provided at runtime by the caller
+        ANDROIDX            //using AndroidX KeySet management
     }
 }

@@ -85,6 +85,7 @@ dependencies {
 
     api appDependencies.boilerplate
     api appDependencies.conceal
+    api appDependencies.security
 
     testImplementation appDependencies.jUnit
     testImplementation appDependencies.mockitoCore

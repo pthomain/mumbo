@@ -26,9 +26,13 @@ import dagger.Module
 import dagger.Provides
 import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
 import uk.co.glass_software.android.mumbo.conceal.ConcealModule
+import uk.co.glass_software.android.mumbo.tink.TinkModule
 import javax.inject.Singleton
 
-@Module(includes = [ConcealModule::class])
+@Module(includes = [
+    ConcealModule::class,
+    TinkModule::class
+])
 internal class MumboModule(private val context: Context,
                            private val logger: Logger) {
 

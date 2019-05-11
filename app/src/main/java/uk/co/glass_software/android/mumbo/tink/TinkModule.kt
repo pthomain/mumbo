@@ -19,25 +19,32 @@
  * under the License.
  */
 
-package uk.co.glass_software.android.mumbo
+package uk.co.glass_software.android.mumbo.tink
 
-import dagger.Component
+import android.content.Context
+import com.facebook.android.crypto.keychain.AndroidConceal
+import com.facebook.android.crypto.keychain.SharedPrefsBackedKeyChain
+import com.facebook.crypto.CryptoConfig
+import com.google.crypto.tink.proto.Tink
+import dagger.Module
+import dagger.Provides
+import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
+import uk.co.glass_software.android.mumbo.MumboComponent.Companion.CONCEAL
+import uk.co.glass_software.android.mumbo.MumboComponent.Companion.TINK
 import uk.co.glass_software.android.mumbo.base.EncryptionManager
+import uk.co.glass_software.android.mumbo.conceal.ConcealEncryptionManager
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Singleton
-@Component(modules = [MumboModule::class])
-internal interface MumboComponent {
+@Module
+internal class TinkModule {
 
-   @Named(CONCEAL)
-   fun conceal(): EncryptionManager
+    @Provides
+    @Singleton
+    @Named(TINK)
+    fun provideTinkEncryptionManager(applicationContext: Context) =
+            TinkEncryptionManager(
+                    applicationContext
+            ) as EncryptionManager
 
-   @Named(TINK)
-   fun tink(): EncryptionManager
-
-    companion object {
-        const val CONCEAL = "CONCEAL"
-        const val TINK = "TINK"
-    }
 }

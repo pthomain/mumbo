@@ -66,13 +66,15 @@ ext {
     daggerVersion = '2.17'
     jsr250Version = '1.0'
 
-    boilerplateVersion = '2.6'
+    boilerplateVersion = '2.9'
+    securityVersion = '1.0.0-alpha01'
 
     rxJavaVersion = '2.2.0'
     rxKotlinVersion = '2.3.0'
     rxAndroidVersion = '2.1.0'
 
     gsonVersion = '2.8.5'
+    concealVersion = '2.0.2'
     concealVersion = '2.0.2'
 
     jUnitVersion = '4.12'
@@ -96,6 +98,7 @@ ext {
 
             boilerplate   : "com.github.pthomain.boilerplate:core:$boilerplateVersion",
             conceal       : "com.facebook.conceal:conceal:$concealVersion",
+            security      : "androidx.security:security-crypto:$securityVersion",
 
             jUnit         : "junit:junit:$jUnitVersion",
             mockitoCore   : "org.mockito:mockito-core:$mockitoVersion"
