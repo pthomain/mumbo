@@ -31,7 +31,7 @@ class Mumbo(
 
     fun conceal() = component.conceal()
 
-    fun jumbo() = component.conceal()
+    fun tink() = component.tink()
 
     private val component =
         DaggerMumboComponent.builder()
