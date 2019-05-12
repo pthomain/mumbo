@@ -1,6 +1,7 @@
 package uk.co.glass_software.android.mumbo.tink
 
 import android.content.Context
+import androidx.annotation.RequiresApi
 import androidx.security.crypto.MasterKeys
 import com.google.common.base.Charsets.UTF_8
 import com.google.crypto.tink.Aead
@@ -14,6 +15,7 @@ import uk.co.glass_software.android.mumbo.base.EncryptionManager.KeyPolicy.ANDRO
 import java.nio.ByteBuffer
 import java.security.GeneralSecurityException
 
+@RequiresApi(23)
 class TinkEncryptionManager(context: Context) : EncryptionManager {
 
     companion object {

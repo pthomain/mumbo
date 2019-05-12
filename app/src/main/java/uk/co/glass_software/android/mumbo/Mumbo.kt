@@ -22,6 +22,7 @@
 package uk.co.glass_software.android.mumbo
 
 import android.content.Context
+import androidx.annotation.RequiresApi
 import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
 
 class Mumbo(
@@ -31,6 +32,7 @@ class Mumbo(
 
     fun conceal() = component.conceal()
 
+    @RequiresApi(23)
     fun tink() = component.tink()
 
     private val component =

@@ -21,6 +21,7 @@
 
 package uk.co.glass_software.android.mumbo
 
+import androidx.annotation.RequiresApi
 import dagger.Component
 import uk.co.glass_software.android.mumbo.base.EncryptionManager
 import javax.inject.Named
@@ -30,11 +31,12 @@ import javax.inject.Singleton
 @Component(modules = [MumboModule::class])
 internal interface MumboComponent {
 
-   @Named(CONCEAL)
-   fun conceal(): EncryptionManager
+    @Named(CONCEAL)
+    fun conceal(): EncryptionManager
 
-   @Named(TINK)
-   fun tink(): EncryptionManager
+    @Named(TINK)
+    @RequiresApi(23)
+    fun tink(): EncryptionManager
 
     companion object {
         const val CONCEAL = "CONCEAL"
