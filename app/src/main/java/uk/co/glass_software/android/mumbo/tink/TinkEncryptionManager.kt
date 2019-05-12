@@ -74,9 +74,7 @@ class TinkEncryptionManager(context: Context) : EncryptionManager {
                 val stringByteLength = toEncrypt.size
 
                 val buffer = ByteBuffer.allocate(
-                        INTEGER_BYTES
-                                + INTEGER_BYTES
-                                + stringByteLength
+                    INTEGER_BYTES + stringByteLength
                 )
 
                 buffer.putInt(stringByteLength)
