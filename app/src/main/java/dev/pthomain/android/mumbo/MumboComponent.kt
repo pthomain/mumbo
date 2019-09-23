@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017 Glass Software Ltd
+ *
+ * Copyright (C) 2017 Pierre Thomain
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,37 +18,30 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
-package uk.co.glass_software.android.mumbo
+package dev.pthomain.android.mumbo
 
-import android.content.Context
 import androidx.annotation.RequiresApi
-import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
+import dagger.Component
+import dev.pthomain.android.mumbo.base.EncryptionManager
+import javax.inject.Named
+import javax.inject.Singleton
 
-class Mumbo(
-    context: Context,
-    logger: Logger? = null
-) {
+@Singleton
+@Component(modules = [MumboModule::class])
+internal interface MumboComponent {
 
-    fun conceal() = component.conceal()
+    @Named(CONCEAL)
+    fun conceal(): EncryptionManager
 
+    @Named(TINK)
     @RequiresApi(23)
-    fun tink() = component.tink()
+    fun tink(): EncryptionManager
 
-    private val component =
-        DaggerMumboComponent.builder()
-            .mumboModule(
-                MumboModule(
-                    context,
-                    logger ?: noLogger()
-                )
-            )
-            .build()
-
-    private fun noLogger() = object : Logger {
-        override fun d(tagOrCaller: Any, message: String) = Unit
-        override fun e(tagOrCaller: Any, message: String) = Unit
-        override fun e(tagOrCaller: Any, t: Throwable, message: String?) = Unit
+    companion object {
+        const val CONCEAL = "CONCEAL"
+        const val TINK = "TINK"
     }
 }

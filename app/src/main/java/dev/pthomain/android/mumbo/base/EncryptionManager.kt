@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017 Glass Software Ltd
+ *
+ * Copyright (C) 2017 Pierre Thomain
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,9 +18,10 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
-package uk.co.glass_software.android.mumbo.base
+package dev.pthomain.android.mumbo.base
 
 interface EncryptionManager {
 

@@ -1,4 +1,27 @@
-package uk.co.glass_software.android.mumbo.tink
+/*
+ *
+ * Copyright (C) 2017 Pierre Thomain
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ */
+
+package dev.pthomain.android.mumbo.tink
 
 import android.content.Context
 import androidx.annotation.RequiresApi
@@ -10,8 +33,8 @@ import com.google.crypto.tink.aead.AeadKeyTemplates
 import com.google.crypto.tink.config.TinkConfig
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import com.google.crypto.tink.subtle.Base64
-import uk.co.glass_software.android.mumbo.base.EncryptionManager
-import uk.co.glass_software.android.mumbo.base.EncryptionManager.KeyPolicy.ANDROIDX
+import dev.pthomain.android.mumbo.base.EncryptionManager
+import dev.pthomain.android.mumbo.base.EncryptionManager.KeyPolicy.ANDROIDX
 import java.nio.ByteBuffer
 import java.security.GeneralSecurityException
 
@@ -46,7 +69,10 @@ class TinkEncryptionManager(context: Context) : EncryptionManager {
 
             val aeadKeysetHandle = AndroidKeysetManager.Builder()
                     .withKeyTemplate(AeadKeyTemplates.AES256_GCM)
-                    .withSharedPref(context, VALUE_KEYSET_ALIAS, SHARED_PREFS_FILE_NAME)
+                    .withSharedPref(context,
+                        VALUE_KEYSET_ALIAS,
+                        SHARED_PREFS_FILE_NAME
+                    )
                     .withMasterKeyUri(KEYSTORE_PATH_URI + masterKeyAlias)
                     .build().keysetHandle
 

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017 Glass Software Ltd
+ *
+ * Copyright (C) 2017 Pierre Thomain
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,31 +18,28 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
-package uk.co.glass_software.android.mumbo
+package dev.pthomain.android.mumbo.tink
 
 import android.content.Context
+import androidx.annotation.RequiresApi
 import dagger.Module
 import dagger.Provides
-import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
-import uk.co.glass_software.android.mumbo.conceal.ConcealModule
-import uk.co.glass_software.android.mumbo.tink.TinkModule
+import dev.pthomain.android.mumbo.MumboComponent.Companion.TINK
+import dev.pthomain.android.mumbo.base.EncryptionManager
+import javax.inject.Named
 import javax.inject.Singleton
 
-@Module(includes = [
-    ConcealModule::class,
-    TinkModule::class
-])
-internal class MumboModule(private val context: Context,
-                           private val logger: Logger) {
+@Module
+internal class TinkModule {
 
     @Provides
     @Singleton
-    fun context() = context.applicationContext
-
-    @Provides
-    @Singleton
-    fun logger() = logger
+    @Named(TINK)
+    @RequiresApi(23)
+    fun provideTinkEncryptionManager(applicationContext: Context) =
+        TinkEncryptionManager(applicationContext) as EncryptionManager
 
 }

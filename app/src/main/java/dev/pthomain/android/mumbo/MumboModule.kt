@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017 Glass Software Ltd
+ *
+ * Copyright (C) 2017 Pierre Thomain
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,34 +18,36 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
-package uk.co.glass_software.android.mumbo.tink
+package dev.pthomain.android.mumbo
 
 import android.content.Context
-import com.facebook.android.crypto.keychain.AndroidConceal
-import com.facebook.android.crypto.keychain.SharedPrefsBackedKeyChain
-import com.facebook.crypto.CryptoConfig
-import com.google.crypto.tink.proto.Tink
 import dagger.Module
 import dagger.Provides
-import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
-import uk.co.glass_software.android.mumbo.MumboComponent.Companion.CONCEAL
-import uk.co.glass_software.android.mumbo.MumboComponent.Companion.TINK
-import uk.co.glass_software.android.mumbo.base.EncryptionManager
-import uk.co.glass_software.android.mumbo.conceal.ConcealEncryptionManager
-import javax.inject.Named
+import dev.pthomain.android.boilerplate.core.utils.log.Logger
+import dev.pthomain.android.mumbo.conceal.ConcealModule
+import dev.pthomain.android.mumbo.tink.TinkModule
 import javax.inject.Singleton
 
-@Module
-internal class TinkModule {
+@Module(
+    includes = [
+        ConcealModule::class,
+        TinkModule::class
+    ]
+)
+internal class MumboModule(
+    private val context: Context,
+    private val logger: Logger
+) {
 
     @Provides
     @Singleton
-    @Named(TINK)
-    fun provideTinkEncryptionManager(applicationContext: Context) =
-            TinkEncryptionManager(
-                    applicationContext
-            ) as EncryptionManager
+    fun context() = context.applicationContext
+
+    @Provides
+    @Singleton
+    fun logger() = logger
 
 }

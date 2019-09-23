@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017 Glass Software Ltd
+ *
+ * Copyright (C) 2017 Pierre Thomain
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,9 +18,10 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
-package uk.co.glass_software.android.mumbo.conceal
+package dev.pthomain.android.mumbo.conceal
 
 import android.content.Context
 import com.facebook.android.crypto.keychain.AndroidConceal
@@ -27,9 +29,9 @@ import com.facebook.android.crypto.keychain.SharedPrefsBackedKeyChain
 import com.facebook.crypto.CryptoConfig
 import dagger.Module
 import dagger.Provides
-import uk.co.glass_software.android.boilerplate.core.utils.log.Logger
-import uk.co.glass_software.android.mumbo.MumboComponent.Companion.CONCEAL
-import uk.co.glass_software.android.mumbo.base.EncryptionManager
+import dev.pthomain.android.boilerplate.core.utils.log.Logger
+import dev.pthomain.android.mumbo.MumboComponent.Companion.CONCEAL
+import dev.pthomain.android.mumbo.base.EncryptionManager
 import javax.inject.Named
 import javax.inject.Singleton
 
