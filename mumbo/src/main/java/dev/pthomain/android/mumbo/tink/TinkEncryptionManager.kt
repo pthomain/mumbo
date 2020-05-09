@@ -34,12 +34,12 @@ import com.google.crypto.tink.config.TinkConfig
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import com.google.crypto.tink.subtle.Base64
 import dev.pthomain.android.mumbo.base.EncryptionManager
-import dev.pthomain.android.mumbo.base.EncryptionManager.KeyPolicy.ANDROIDX
+import dev.pthomain.android.mumbo.base.EncryptionManager.KeyPolicy.JETPACK
 import java.nio.ByteBuffer
 import java.security.GeneralSecurityException
 
 @RequiresApi(23)
-class TinkEncryptionManager(context: Context) : EncryptionManager {
+internal class TinkEncryptionManager(context: Context) : EncryptionManager {
 
     companion object {
         private const val SHARED_PREFS_FILE_NAME = "mumbo_tink_shared_prefs"
@@ -52,34 +52,43 @@ class TinkEncryptionManager(context: Context) : EncryptionManager {
 
     private val aead: Aead?
     override val isEncryptionAvailable: Boolean
-    override val keyPolicy = ANDROIDX
+    override val keyPolicy = JETPACK
 
     init {
         val isAvailable = try {
             TinkConfig.register()
             true
-        } catch (e: GeneralSecurityException) {
+        } catch (e: Exception) {
             false
         }
-        isEncryptionAvailable = isAvailable
+
+        var aead: Aead?
 
         if (isAvailable) {
-            val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
-            val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
+            try {
+                val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
+                val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
 
-            val aeadKeysetHandle = AndroidKeysetManager.Builder()
+                val aeadKeysetHandle = AndroidKeysetManager.Builder()
                     .withKeyTemplate(AeadKeyTemplates.AES256_GCM)
-                    .withSharedPref(context,
+                    .withSharedPref(
+                        context,
                         VALUE_KEYSET_ALIAS,
                         SHARED_PREFS_FILE_NAME
                     )
                     .withMasterKeyUri(KEYSTORE_PATH_URI + masterKeyAlias)
                     .build().keysetHandle
 
-            aead = AeadFactory.getPrimitive(aeadKeysetHandle)
+                aead = AeadFactory.getPrimitive(aeadKeysetHandle)
+            } catch (e: Exception) {
+                aead = null
+            }
         } else {
             aead = null
         }
+
+        this.aead = aead
+        isEncryptionAvailable = aead != null
     }
 
     override fun encrypt(toEncrypt: String?,

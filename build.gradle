@@ -41,6 +41,7 @@ buildscript {
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath 'com.android.tools.build:gradle:3.5.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
     }
 }
 
@@ -58,6 +59,8 @@ task clean(type: Delete) {
 }
 
 ext {
+    mumboVersion = '2.1'
+
     compileSdkVersion = 28
     minSdkVersion = 16
     targetSdkVersion = 28
@@ -68,15 +71,9 @@ ext {
     daggerVersion = '2.17'
     jsr250Version = '1.0'
 
-    boilerplateVersion = '4.0'
+    boilerplateVersion = '4.2'
     securityVersion = '1.0.0-alpha01'
 
-    rxJavaVersion = '2.2.0'
-    rxKotlinVersion = '2.3.0'
-    rxAndroidVersion = '2.1.0'
-
-    gsonVersion = '2.8.5'
-    concealVersion = '2.0.2'
     concealVersion = '2.0.2'
 
     jUnitVersion = '4.12'
@@ -88,16 +85,12 @@ ext {
             kotlinJdk8    : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion",
             kotlinReflect : "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
 
-            rxJava        : "io.reactivex.rxjava2:rxjava:$rxJavaVersion",
-            rxKotlin      : "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion",
-            rxAndroid     : "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion",
-
             dagger        : "com.google.dagger:dagger:$daggerVersion",
             daggerCompiler: "com.google.dagger:dagger-compiler:$daggerVersion",
 
             jsr250        : "javax.annotation:jsr250-api:$jsr250Version",
 
-            boilerplate   : "com.github.pthomain.boilerplate:core:$boilerplateVersion",
+            boilerplate   : "dev.pthomain.boilerplate:core:$boilerplateVersion",
             conceal       : "com.facebook.conceal:conceal:$concealVersion",
             security      : "androidx.security:security-crypto:$securityVersion",
 
