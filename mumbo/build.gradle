@@ -152,11 +152,9 @@ project.ext {
     mavSiteUrl = 'https://github.com/pthomain/mumbo'
 }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
-
 bintray {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
     user = 'pthomain'
     key = properties.getProperty("bintray_api_key")
     publications = ['mumbo']
