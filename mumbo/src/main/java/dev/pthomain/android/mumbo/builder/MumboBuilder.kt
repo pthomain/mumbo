@@ -1,0 +1,104 @@
+/*
+ *
+ * Copyright (C) 2017 Pierre Thomain
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ */
+
+package dev.pthomain.android.mumbo.builder
+
+import android.content.Context
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.M
+import com.facebook.android.crypto.keychain.AndroidConceal
+import com.facebook.android.crypto.keychain.SharedPrefsBackedKeyChain
+import com.facebook.crypto.CryptoConfig
+import com.facebook.crypto.keychain.KeyChain
+import dev.pthomain.android.boilerplate.core.utils.log.Logger
+import dev.pthomain.android.mumbo.base.EncryptionManager
+import dev.pthomain.android.mumbo.conceal.ConcealEncryptionManager
+import dev.pthomain.android.mumbo.tink.TinkEncryptionManager
+import org.koin.core.qualifier.named
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
+
+internal class MumboBuilder {
+
+    private var context: Context? = null
+    private var logger: Logger? = null
+
+    private fun noLogger() = object : Logger {
+        override fun d(tagOrCaller: Any, message: String) = Unit
+        override fun e(tagOrCaller: Any, message: String) = Unit
+        override fun e(tagOrCaller: Any, t: Throwable, message: String?) = Unit
+    }
+
+    fun withContext(context: Context) = apply {
+        this.context = context.applicationContext
+    }
+
+    fun withLogger(logger: Logger) = apply {
+        this.logger = logger
+    }
+
+    private fun module(
+        context: Context,
+        logger: Logger
+    ) = module {
+
+        single<KeyChain> {
+            SharedPrefsBackedKeyChain(
+                context,
+                CryptoConfig.KEY_256
+            )
+        }
+
+        single<EncryptionManager>(named(CONCEAL)) {
+            ConcealEncryptionManager(
+                context,
+                logger,
+                get(),
+                AndroidConceal.get()
+            )
+        }
+
+        single<EncryptionManager?>(named(TINK)) {
+            if (SDK_INT >= M) TinkEncryptionManager(context)
+            else null
+        }
+    }
+
+    fun build(): Pair<EncryptionManager, EncryptionManager?> {
+        val koin = koinApplication {
+            modules(
+                module(
+                    requireNotNull(context) { "Please provide a Context." }.applicationContext,
+                    logger ?: noLogger()
+                )
+            )
+        }.koin
+
+        return koin.get<EncryptionManager>(named(CONCEAL)) to koin.get(named(TINK))
+    }
+
+    private companion object {
+        const val CONCEAL = "CONCEAL"
+        const val TINK = "TINK"
+    }
+}

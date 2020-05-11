@@ -23,33 +23,24 @@
 
 package dev.pthomain.android.mumbo
 
-import android.content.Context
 import androidx.annotation.RequiresApi
-import dev.pthomain.android.boilerplate.core.utils.log.Logger
+import dev.pthomain.android.mumbo.base.EncryptionManager
+import dev.pthomain.android.mumbo.builder.MumboBuilder
 
-class Mumbo(
-    context: Context,
-    logger: Logger? = null
-) {
+class Mumbo {
 
-    fun conceal() = component.conceal()
+    val conceal: EncryptionManager
 
-    @RequiresApi(23)
-    fun tink() = component.tink()
+    val tink: EncryptionManager
+        @RequiresApi(23) get() = nullableTink!!
 
-    private val component =
-        DaggerMumboComponent.builder()
-            .mumboModule(
-                MumboModule(
-                    context,
-                    logger ?: noLogger()
-                )
-            )
-            .build()
+    private val nullableTink: EncryptionManager?
 
-    private fun noLogger() = object : Logger {
-        override fun d(tagOrCaller: Any, message: String) = Unit
-        override fun e(tagOrCaller: Any, message: String) = Unit
-        override fun e(tagOrCaller: Any, t: Throwable, message: String?) = Unit
+    init {
+        with(MumboBuilder().build()) {
+            conceal = first
+            nullableTink = second
+        }
     }
+
 }

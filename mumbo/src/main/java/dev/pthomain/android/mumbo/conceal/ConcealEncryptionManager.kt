@@ -24,8 +24,8 @@
 package dev.pthomain.android.mumbo.conceal
 
 import android.content.Context
+import com.facebook.crypto.keychain.KeyChain
 import com.facebook.android.crypto.keychain.AndroidConceal
-import com.facebook.android.crypto.keychain.SharedPrefsBackedKeyChain
 import com.facebook.crypto.Crypto
 import com.facebook.crypto.Entity
 import com.facebook.soloader.SoLoader
@@ -36,7 +36,7 @@ import dev.pthomain.android.mumbo.base.EncryptionManager.KeyPolicy.SHARED_PREFER
 internal class ConcealEncryptionManager(
     context: Context,
     logger: Logger,
-    keyChain: SharedPrefsBackedKeyChain,
+    keyChain: KeyChain,
     androidConceal: AndroidConceal
 ) : BaseEncryptionManager(logger, SHARED_PREFERENCES) {
 

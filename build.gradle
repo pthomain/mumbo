@@ -68,9 +68,7 @@ ext {
     buildToolsVersion = '28.0.2'
 
     jitPackVersion = '1.0'
-
-    daggerVersion = '2.17'
-    jsr250Version = '1.0'
+    koinVersion = '2.1.5'
 
     boilerplateVersion = '4.2'
     securityVersion = '1.0.0-alpha01'
@@ -81,21 +79,19 @@ ext {
     mockitoVersion = '2.1.0'
 
     appDependencies = [
-            jitPack       : "com.github.jitpack:gradle-simple:$jitPackVersion",
+            jitPack      : "com.github.jitpack:gradle-simple:$jitPackVersion",
 
-            kotlinJdk8    : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion",
-            kotlinReflect : "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
+            kotlinJdk8   : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion",
+            kotlinReflect: "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
 
-            dagger        : "com.google.dagger:dagger:$daggerVersion",
-            daggerCompiler: "com.google.dagger:dagger-compiler:$daggerVersion",
+            koinCore     : "org.koin:koin-core:$koinVersion",
+            koinCoreExt  : "org.koin:koin-core-ext:$koinVersion",
 
-            jsr250        : "javax.annotation:jsr250-api:$jsr250Version",
+            boilerplate  : "dev.pthomain.boilerplate:core:$boilerplateVersion",
+            conceal      : "com.facebook.conceal:conceal:$concealVersion",
+            security     : "androidx.security:security-crypto:$securityVersion",
 
-            boilerplate   : "dev.pthomain.boilerplate:core:$boilerplateVersion",
-            conceal       : "com.facebook.conceal:conceal:$concealVersion",
-            security      : "androidx.security:security-crypto:$securityVersion",
-
-            jUnit         : "junit:junit:$jUnitVersion",
-            mockitoCore   : "org.mockito:mockito-core:$mockitoVersion"
+            jUnit        : "junit:junit:$jUnitVersion",
+            mockitoCore  : "org.mockito:mockito-core:$mockitoVersion"
     ]
 }

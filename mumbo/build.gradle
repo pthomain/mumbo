@@ -112,46 +112,15 @@ sourceSets {
     }
 }
 
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.sourceFiles
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-task classesJar(type: Jar) {
-    from "$buildDir/intermediates/javac/release/classes"
-}
-
-artifacts {
-    archives classesJar
-    archives javadocJar
-    archives sourcesJar
-}
-
 dependencies {
     implementation appDependencies.jitPack
 
-    implementation appDependencies.dagger
-    kapt appDependencies.daggerCompiler
-
-    compileOnly appDependencies.jsr250
+    implementation appDependencies.koinCore
+    implementation appDependencies.koinCoreExt
 
     api appDependencies.kotlinJdk8
 
     api appDependencies.boilerplate
     api appDependencies.conceal
     api appDependencies.security
-
-    testImplementation appDependencies.jUnit
-    testImplementation appDependencies.mockitoCore
-    testAnnotationProcessor appDependencies.daggerCompiler
 }
