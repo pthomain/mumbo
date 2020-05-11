@@ -21,4 +21,8 @@
   ~
   -->
 
-<manifest package="dev.pthomain.android.mumbo"/>
+<manifest xmlns:tools="http://schemas.android.com/tools"
+        package="dev.pthomain.android.mumbo">
+
+    <uses-sdk tools:overrideLibrary="androidx.security" />
+</manifest>

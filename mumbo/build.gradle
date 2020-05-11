@@ -24,12 +24,14 @@
 plugins {
     id "com.jfrog.bintray"
 }
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'maven-publish'
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'dev.pthomain.mumbo'
 
@@ -41,7 +43,13 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        consumerProguardFiles 'proguard-rules-lib.pro'
+        multiDexEnabled true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath true
+            }
+        }
     }
 
     buildTypes {
@@ -97,9 +105,6 @@ android {
         }
     }
 
-    useLibrary 'android.test.runner'
-    useLibrary 'android.test.base'
-    useLibrary 'android.test.mock'
 }
 
 sourceSets {
@@ -114,8 +119,8 @@ sourceSets {
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
     from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
 }
 
 task javadoc(type: Javadoc) {
@@ -129,7 +134,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 task classesJar(type: Jar) {
-    from "$buildDir/intermediates/classes/release"
+    from "$buildDir/intermediates/javac/release/classes"
 }
 
 artifacts {
@@ -150,37 +155,11 @@ project.ext {
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId 'dev.pthomain.mumbo'
-            artifactId 'mumbo'
-            version mumboVersion
-            artifact("$buildDir/outputs/aar/mumbo-release.aar")
-
-            // Define this explicitly if using implementation or api configurations
-            pom.withXml {
-                def dependenciesNode = asNode().getAt('dependencies')[0] ?: asNode().appendNode('dependencies')
-
-                // Iterate over the implementation dependencies (we don't want the test ones), adding a <dependency> node for each
-                configurations.implementation.allDependencies.each {
-                    // Ensure dependencies such as fileTree are not included.
-                    if (it.name != 'unspecified') {
-                        def dependencyNode = dependenciesNode.appendNode('dependency')
-                        dependencyNode.appendNode('groupId', it.group)
-                        dependencyNode.appendNode('artifactId', it.name)
-                        dependencyNode.appendNode('version', it.version)
-                    }
-                }
-            }
-        }
-    }
-}
 
 bintray {
     user = 'pthomain'
     key = properties.getProperty("bintray_api_key")
-    publications = ['release']
+    publications = ['mumbo']
     configurations = ['archives']
     override = true
 
@@ -191,12 +170,42 @@ bintray {
         licenses = ['Apache-2.0']
         publicDownloadNumbers = false
         vcsUrl = 'https://github.com/pthomain/mumbo.git'
+        attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
         version {
             licenses = ['Apache-2.0']
             desc = "Version $mumboVersion"
             name = mumboVersion
             released = new Date()
             vcsTag = mumboVersion
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            mumbo(MavenPublication) {
+                groupId 'dev.pthomain.mumbo'
+                artifactId 'mumbo'
+                version mumboVersion
+                artifact("$buildDir/outputs/aar/mumbo-release.aar")
+
+                // Define this explicitly if using implementation or api configurations
+                pom.withXml {
+                    def dependenciesNode = asNode().getAt('dependencies')[0] ?: asNode().appendNode('dependencies')
+
+                    // Iterate over the implementation dependencies (we don't want the test ones), adding a <dependency> node for each
+                    configurations.implementation.allDependencies.each {
+                        // Ensure dependencies such as fileTree are not included.
+                        if (it.name != 'unspecified') {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', it.group)
+                            dependencyNode.appendNode('artifactId', it.name)
+                            dependencyNode.appendNode('version', it.version)
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -26,7 +26,6 @@ package dev.pthomain.android.mumbo.tink
 import android.content.Context
 import androidx.annotation.RequiresApi
 import androidx.security.crypto.MasterKeys
-import com.google.common.base.Charsets.UTF_8
 import com.google.crypto.tink.Aead
 import com.google.crypto.tink.aead.AeadFactory
 import com.google.crypto.tink.aead.AeadKeyTemplates
@@ -37,6 +36,7 @@ import dev.pthomain.android.mumbo.base.EncryptionManager
 import dev.pthomain.android.mumbo.base.EncryptionManager.KeyPolicy.JETPACK
 import java.nio.ByteBuffer
 import java.security.GeneralSecurityException
+import kotlin.text.Charsets.UTF_8
 
 @RequiresApi(23)
 internal class TinkEncryptionManager(context: Context) : EncryptionManager {
