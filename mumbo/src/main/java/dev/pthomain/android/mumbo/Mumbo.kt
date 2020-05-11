@@ -27,20 +27,17 @@ import androidx.annotation.RequiresApi
 import dev.pthomain.android.mumbo.base.EncryptionManager
 import dev.pthomain.android.mumbo.builder.MumboBuilder
 
-class Mumbo {
+class Mumbo(
+    private val conceal: EncryptionManager,
+    private val tink: EncryptionManager?
+) {
 
-    val conceal: EncryptionManager
+    fun conceal() = conceal
 
-    val tink: EncryptionManager
-        @RequiresApi(23) get() = nullableTink!!
+    @RequiresApi(23)
+    fun tink() = tink!!
 
-    private val nullableTink: EncryptionManager?
-
-    init {
-        with(MumboBuilder().build()) {
-            conceal = first
-            nullableTink = second
-        }
+    companion object {
+        fun builder() = MumboBuilder()
     }
-
 }

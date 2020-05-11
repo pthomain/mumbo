@@ -31,6 +31,7 @@ import com.facebook.android.crypto.keychain.SharedPrefsBackedKeyChain
 import com.facebook.crypto.CryptoConfig
 import com.facebook.crypto.keychain.KeyChain
 import dev.pthomain.android.boilerplate.core.utils.log.Logger
+import dev.pthomain.android.mumbo.Mumbo
 import dev.pthomain.android.mumbo.base.EncryptionManager
 import dev.pthomain.android.mumbo.conceal.ConcealEncryptionManager
 import dev.pthomain.android.mumbo.tink.TinkEncryptionManager
@@ -38,7 +39,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
-internal class MumboBuilder {
+class MumboBuilder internal constructor() {
 
     private var context: Context? = null
     private var logger: Logger? = null
@@ -84,7 +85,7 @@ internal class MumboBuilder {
         }
     }
 
-    fun build(): Pair<EncryptionManager, EncryptionManager?> {
+    fun build(): Mumbo {
         val koin = koinApplication {
             modules(
                 module(
@@ -94,7 +95,10 @@ internal class MumboBuilder {
             )
         }.koin
 
-        return koin.get<EncryptionManager>(named(CONCEAL)) to koin.get(named(TINK))
+        return Mumbo(
+            koin.get(named(CONCEAL)),
+            koin.get(named(TINK))
+        )
     }
 
     private companion object {
